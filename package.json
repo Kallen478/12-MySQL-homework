@@ -1,0 +1,25 @@
+{
+  "name": "12-mysql-homework",
+  "version": "1.0.0",
+  "description": "<b>MySQL Employee Tracker:</b> <hr>",
+  "main": "employees.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kallen478/12-MySQL-homework.git"
+  },
+  "author": "Kyle Allen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Kallen478/12-MySQL-homework/issues"
+  },
+  "homepage": "https://github.com/Kallen478/12-MySQL-homework#readme",
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "inquirer": "^7.3.3",
+    "mysql": "^2.18.1",
+    "util": "^0.12.3"
+  }
+}
