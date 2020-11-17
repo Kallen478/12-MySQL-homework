@@ -53,9 +53,26 @@ function mainMenu() {
                     updateEmpRole();
             }
         })
-
 }
+
 // Add department 
+function addDept() {
+    inquirer.prompt({
+        type: "input",
+        message: "New department name:",
+        name: "dept"
+    })
+        .then((answer) => {
+            connection.query("INSERT INTO department name VALUES ?", answer.dept,
+                (err) => {
+                    if (err) throw err;
+                    console.log("Department successfully added.");
+                });
+            mainMenu();
+        })
+};
+
+// Add role
 
 
 // Add employee
@@ -111,13 +128,14 @@ function viewEmpByRole() {
             })
                 .then((answer) => {
                     const query = connectionQuery(query)
-                    .then(res => {
-                        console.log("\n");
-                        console.table(res);
-                        mainMenu();
+                        .then(res => {
+                            console.log("\n");
+                            console.table(res);
+                            mainMenu();
+                        })
                 })
-        })
-},
+        },
+
 // View all employees
 function viewAllEmp() {
     const query = "SELECT * FROM employee";
