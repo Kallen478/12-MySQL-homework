@@ -73,10 +73,121 @@ function addDept() {
 };
 
 // Add role
-
+function addRole() {
+    connectionQuery("SELECT * from department")
+        .then(res => {
+            inquirer.prompt([
+                    {
+                        name: "role",
+                        type: "input",
+                        message: "Enter new role name",
+                    },
+                    {
+                        name: "salary",
+                        type: "input",
+                        message: "Enter salary amount",
+                    },
+                    {
+                        name: "department",
+                        type: "list",
+                        message: "Select the department the new role will be in",
+                        choices: () => {
+                            deptList = [];
+                            res.forEach(res => {
+                                deptList.push(res.name);
+                            });
+                            return deptList;
+                        }
+                    }
+                ])
+                .then((answer) => {
+                        let deptChoice = res.filter((res) => res.name == answer.department);
+                        connection.query("INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)", [answer.role, answer.salary, deptChoice[0].id],
+                            (err) => {
+                                if (err) throw err;
+                                console.log("Role sucessfully added.");
+                            });
+                        mainMenu();
+                })
+        })
+}
 
 // Add employee
+function addEmployee() {
+    connectionQuery("SELECT * from role")
+        .then(res => {
+            inquirer.prompt([{
+                    name: "firstName",
+                    type: "input",
+                    message: "Enter first name",
+                },
+                {
+                    name: "lastName",
+                    type: "input",
+                    message: "Enter last name",
+                },
+                {
+                    name: "roleName",
+                    type: "list",
+                    message: "Select role for the new employee",
+                    choices: () => {
+                        rolesList = [];
+                        res.forEach(result => {
+                            rolesList.push(result.title);
+                        });
+                        return rolesList;
+                    }
+                }
+                ])
+                .then((answer) => {
+                        connection.query('SELECT * FROM role', (err, res) => {
+                                if (err)
+                                    throw (err);
+                                let roleChoice = res.filter((res) => res.title == answer.roleName);
 
+                                connection.query("SELECT * FROM employee", (res) => {
+                                        inquirer.prompt([
+                                            {
+                                                name: "manager",
+                                                type: "list",
+                                                message: "Select manager for the new employee",
+                                                choices: () => {
+                                                    managersList = [];
+                                                    res.forEach(res => {
+                                                        managersList.push(res.last_name);
+                                                    });
+                                                    managersList.push("No manager");
+                                                    return managersList;
+                                                }
+                                            }
+                                        ])
+                                            .then((managerAnswer) => {
+                                                    connection.query("SELECT * FROM employee", (err, res) => {
+                                                            if (err)
+                                                                throw (err);
+                                                            let managerChoice = res.filter((res) => res.last_name == managerAnswer.manager);
+
+                                                            if (managerAnswer.manager === "No manager") {
+                                                                managerChoice[0].id = null;
+                                                            }
+                                                            else {
+                                                                managerChoice[0].id;
+                                                            }
+
+                                                            connection.query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)", [answer.firstName, answer.lastName, roleChoice[0].id, managerChoice[0].id],
+                                                                (err) => {
+                                                                    if (err)
+                                                                        throw err;
+                                                                    console.log("Employee sucessfully added.");
+                                                                });
+                                                            mainMenu();
+                                                        });
+                                                });
+                                    });
+                            });
+                    })
+        })
+}
 
 // View employees by department
 function viewEmpByDept() {
@@ -150,8 +261,8 @@ function viewAllEmp() {
 // Update employee role
 
 
-connection.connect(function (err) {
+connection.connect((err) => {
         if (err) throw err;
         console.log("Employee Tracker Main Menu");
         mainMenu();
-})}
+    })}
