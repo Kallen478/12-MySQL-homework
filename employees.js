@@ -63,7 +63,7 @@ function addDept() {
         name: "dept"
     })
         .then((answer) => {
-            connection.query("INSERT INTO department name VALUES ?", answer.dept,
+            connection.query("INSERT INTO department (name) VALUES (?)", answer.dept,
                 (err) => {
                     if (err) throw err;
                     console.log("Department successfully added.");
